@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCrunch</title>
+    <style>
+        body {
+            display: flex;
+        }
+
+        #sidebar {
+            flex: 0 0 200px;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        #main {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <aside id="sidebar">
+        <button onclick="promptName()">Prompt Name</button>
+        <button onclick="showGreeting()">Show Greeting</button>
+        <form id="orderForm">
+            <label for="burgers">Burgers:</label>
+            <input type="number" id="burgers" name="burgers" min="0">
+            <label for="drinks">Drinks:</label>
+            <input type="number" id="drinks" name="drinks" min="0">
+            <button type="submit">Add Order</button>
+        </form>
+        <button onclick="outputOrders()">Output Orders</button>
+    </aside>
+    <main id="main">
+        <h1>CodeCrunch</h1>
+        <!-- Content of CodeCrunch -->
+    </main>
+    <script>
+        let userName = '';
+
+        function promptName() {
+            userName = prompt("Please enter your first name:");
+        }
+
+        function showGreeting() {
+            if (userName) {
+                alert(`Salutations, ${userName}!`);
+            } else {
+                alert("Please enter your name first.");
+            }
+        }
+
+        const orders = [];
+
+        function addOrder(event) {
+            event.preventDefault();
+            const burgers = parseInt(document.getElementById('burgers').value);
+            const drinks = parseInt(document.getElementById('drinks').value);
+            const order = {
+                Name: userName,
+                Burgers: burgers,
+                Drinks: drinks,
+                Delivered: false
+            };
+            orders.push(order);
+            displayOrder(order);
+            document.getElementById('orderForm').reset();
+        }
+
+        function displayOrder(order) {
+            const orderElement = document.createElement('div');
+            const burgerEmoji = burgers <= 3 ? '🍔'.repeat(order.Burgers) : `🍔x${order.Burgers}`;
+            const drinkEmoji = drinks <= 3 ? '🥤'.repeat(order.Drinks) : `🥤x${order.Drinks}`;
+            orderElement.textContent = `${order.Name}, ${burgerEmoji}, ${drinkEmoji} Deliver`;
+            const deliverButton = document.createElement('button');
+            deliverButton.textContent = 'Deliver';
+            deliverButton.onclick = () => {
+                deliverOrder(order);
+                orderElement.remove();
+            };
+            orderElement.appendChild(deliverButton);
+            document.getElementById('main').appendChild(orderElement);
+        }
+
+        function deliverOrder(order) {
+            order.Delivered = true;
+        }
+
+        function outputOrders() {
+            const totalOrders = orders.length;
+            const totalBurgers = orders.reduce((acc, curr) => acc + curr.Burgers, 0);
+            const totalDrinks = orders.reduce((acc, curr) => acc + curr.Drinks, 0);
+            const totalDelivered = orders.filter(order => order.Delivered).length;
+            const totalUndelivered = totalOrders - totalDelivered;
+            console.log(`Total Orders: ${totalOrders}, Total Burgers: ${totalBurgers}, Total Drinks: ${totalDrinks}`);
+            console.log(`Total Delivered: ${totalDelivered}`);
+            console.log(`Total Undelivered: ${totalUndelivered}`);
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', addOrder);
+    </script>
+</body>
+
+</html>
